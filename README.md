@@ -21,3 +21,23 @@ Run the test suite:
 npm test
 ```
 
+
+## Frontend demo
+
+A simple HTML page that connects to an Ethereum wallet is available at `src/index.html`.
+
+### Run the demo
+
+1. Install a browser wallet extension such as MetaMask.
+2. Start a static file server in the `src` folder (for example `npx http-server src`).
+3. Open `http://localhost:8080/index.html` in your browser.
+4. Click **Connect Wallet** and approve the request in MetaMask.
+5. Your address and balance will appear and you can send ETH to another address.
+
+### Test the code
+
+Run the existing Node.js tests:
+
+```bash
+npm test
+```

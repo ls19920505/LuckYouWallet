@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LuckYouWallet Demo</title>
+</head>
+<body>
+  <h1>LuckYouWallet Frontend</h1>
+  <button id="connect">Connect Wallet</button>
+  <div id="account"></div>
+  <div id="balance"></div>
+  <div id="transfer" style="display:none;">
+    <input id="to" placeholder="Recipient address" />
+    <input id="amount" placeholder="Amount in ETH" />
+    <button id="send">Send ETH</button>
+    <div id="tx"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <script src="frontend.js"></script>
+</body>
+</html>
