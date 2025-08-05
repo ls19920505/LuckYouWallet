@@ -1,21 +1,16 @@
-const assert = require('assert');
 const { Wallet } = require('../src/wallet');
 
-function testGenerate() {
+test('generate wallet and sign message', () => {
   const wallet = Wallet.generate();
-  assert.ok(/^0x[a-f0-9]{40}$/.test(wallet.address));
+  expect(/^0x[a-f0-9]{40}$/.test(wallet.address)).toBe(true);
   const message = 'hello';
   const sig = wallet.signMessage(message);
-  assert.ok(wallet.verifyMessage(message, sig));
-}
+  expect(wallet.verifyMessage(message, sig)).toBe(true);
+});
 
-function testExportRestore() {
+test('export and restore wallet', () => {
   const wallet1 = Wallet.generate();
   const pem = wallet1.exportPrivateKey();
   const wallet2 = Wallet.fromPrivateKey(pem);
-  assert.equal(wallet1.address, wallet2.address);
-}
-
-testGenerate();
-testExportRestore();
-console.log('All tests passed.');
+  expect(wallet1.address).toBe(wallet2.address);
+});
