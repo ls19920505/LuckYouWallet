@@ -1,0 +1,13 @@
+{
+  "name": "luckyouwallet",
+  "version": "0.1.0",
+  "description": "Minimal Web3 wallet framework scaffold",
+  "main": "src/wallet.js",
+  "scripts": {
+    "test": "node test/wallet.test.js"
+  },
+  "keywords": ["web3", "wallet"],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs"
+}
