@@ -1,5 +1,43 @@
 const crypto = require('crypto');
 
+const ALPHABET = 'abcdefghijklmnop'; // 16 characters for 256 combinations
+
+function byteToWord(b) {
+  const first = ALPHABET[Math.floor(b / 16)];
+  const second = ALPHABET[b % 16];
+  return first + second;
+}
+
+function wordToByte(word) {
+  if (word.length !== 2) throw new Error('Invalid mnemonic word');
+  const first = ALPHABET.indexOf(word[0]);
+  const second = ALPHABET.indexOf(word[1]);
+  if (first === -1 || second === -1) throw new Error('Invalid mnemonic word');
+  return first * 16 + second;
+}
+
+function mnemonicToSeed(mnemonic) {
+  const words = mnemonic.trim().split(/\s+/);
+  const bytes = Buffer.from(words.map(wordToByte));
+  return crypto.createHash('sha256').update(bytes).digest();
+}
+
+function fromPrivateKeyBytes(bytes) {
+  const ecdh = crypto.createECDH('secp256k1');
+  ecdh.setPrivateKey(bytes);
+  const pub = ecdh.getPublicKey(null, 'uncompressed');
+  const jwk = {
+    kty: 'EC',
+    crv: 'secp256k1',
+    d: bytes.toString('base64url'),
+    x: pub.slice(1, 33).toString('base64url'),
+    y: pub.slice(33).toString('base64url')
+  };
+  const privateKey = crypto.createPrivateKey({ key: jwk, format: 'jwk' });
+  const publicKey = crypto.createPublicKey({ key: jwk, format: 'jwk' });
+  return new Wallet(privateKey, publicKey);
+}
+
 class Wallet {
   constructor(privateKey, publicKey) {
     this.privateKey = privateKey;
@@ -18,6 +56,17 @@ class Wallet {
     const privateKey = crypto.createPrivateKey({ key: pem, format: 'pem' });
     const publicKey = crypto.createPublicKey(privateKey);
     return new Wallet(privateKey, publicKey);
+  }
+
+  static generateMnemonic() {
+    const bytes = crypto.randomBytes(12);
+    const words = Array.from(bytes).map(byteToWord);
+    return words.join(' ');
+  }
+
+  static fromMnemonic(mnemonic) {
+    const seed = mnemonicToSeed(mnemonic);
+    return fromPrivateKeyBytes(seed.subarray(0, 32));
   }
 
   static computeAddress(publicKey) {
