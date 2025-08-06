@@ -1,26 +1,5 @@
 const crypto = require('crypto');
-
-const ALPHABET = 'abcdefghijklmnop'; // 16 characters for 256 combinations
-
-function byteToWord(b) {
-  const first = ALPHABET[Math.floor(b / 16)];
-  const second = ALPHABET[b % 16];
-  return first + second;
-}
-
-function wordToByte(word) {
-  if (word.length !== 2) throw new Error('Invalid mnemonic word');
-  const first = ALPHABET.indexOf(word[0]);
-  const second = ALPHABET.indexOf(word[1]);
-  if (first === -1 || second === -1) throw new Error('Invalid mnemonic word');
-  return first * 16 + second;
-}
-
-function mnemonicToSeed(mnemonic) {
-  const words = mnemonic.trim().split(/\s+/);
-  const bytes = Buffer.from(words.map(wordToByte));
-  return crypto.createHash('sha256').update(bytes).digest();
-}
+const bip39 = require('bip39');
 
 function fromPrivateKeyBytes(bytes) {
   const ecdh = crypto.createECDH('secp256k1');
@@ -59,13 +38,11 @@ class Wallet {
   }
 
   static generateMnemonic() {
-    const bytes = crypto.randomBytes(12);
-    const words = Array.from(bytes).map(byteToWord);
-    return words.join(' ');
+    return bip39.generateMnemonic();
   }
 
   static fromMnemonic(mnemonic) {
-    const seed = mnemonicToSeed(mnemonic);
+    const seed = bip39.mnemonicToSeedSync(mnemonic);
     return fromPrivateKeyBytes(seed.subarray(0, 32));
   }
 

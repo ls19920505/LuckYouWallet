@@ -11,6 +11,7 @@
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
+    "bip39": "^3.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
