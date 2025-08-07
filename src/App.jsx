@@ -11,21 +11,34 @@ export default function App() {
   const [address, setAddress] = useState('')
   const [privateKey, setPrivateKey] = useState('')
 
-  const generate = () => {
+  const createWallet = () => {
     const m = bip39.generateMnemonic()
     setMnemonic(m)
-    // 通过助记词生成钱包和地址
     const wallet = ethers.Wallet.fromPhrase(m)
     setAddress(wallet.address)
     setPrivateKey(wallet.privateKey)
   }
 
+  const importWallet = () => {
+    const m = window.prompt('请输入助记词') || ''
+    if (!m) return
+    try {
+      const wallet = ethers.Wallet.fromPhrase(m)
+      setMnemonic(m)
+      setAddress(wallet.address)
+      setPrivateKey(wallet.privateKey)
+    } catch (err) {
+      window.alert('导入失败：' + err.message)
+    }
+  }
+
   return (
     <div>
-      <h1>助记词生成器</h1>
-      <button onClick={generate}>生成助记词</button>
+      <h1>钱包管理</h1>
+      <button onClick={createWallet}>创建钱包</button>
+      <button onClick={importWallet}>导入钱包</button>
       <p>{mnemonic}</p>
-      <p>ETH地址：{address}</p>   
+      <p>ETH地址：{address}</p>
       <p>私钥：{privateKey}</p>
     </div>
   )
