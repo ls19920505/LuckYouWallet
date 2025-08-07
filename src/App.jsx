@@ -6,7 +6,8 @@ import React, { useState } from 'react'
 import * as bip39 from 'bip39'
 import { ethers } from 'ethers'
 
-const provider = new ethers.JsonRpcProvider('https://cloudflare-eth.com')
+
+const provider = new ethers.JsonRpcProvider("https://ethereum-sepolia.publicnode.com");
 
 export default function App() {
   const [mnemonic, setMnemonic] = useState('')
