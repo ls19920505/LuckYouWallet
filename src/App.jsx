@@ -14,6 +14,7 @@ export default function App() {
   const [address, setAddress] = useState('')
   const [privateKey, setPrivateKey] = useState('')
   const [balance, setBalance] = useState('')
+  const [balanceWei, setBalanceWei] = useState(0n)
   const [gas, setGas] = useState('')
   const [sendTime, setSendTime] = useState('')
   const [showSend, setShowSend] = useState(false)
@@ -25,6 +26,7 @@ export default function App() {
     if (!addr) return
     try {
       const wei = await provider.getBalance(addr)
+      setBalanceWei(wei)
       setBalance(ethers.formatEther(wei))
     } catch (err) {
       window.alert('查询失败：' + err.message)
@@ -68,8 +70,13 @@ export default function App() {
       return
     }
     try {
+      await queryBalance(address)
       const wallet = new ethers.Wallet(privateKey, provider)
       const value = ethers.parseEther(amount)
+      if (value > balanceWei) {
+        window.alert('余额不足')
+        return
+      }
       const gasLimit = await wallet.estimateGas({ to: toAddr, value })
       setGas(gasLimit.toString())
       const tx = await wallet.sendTransaction({ to: toAddr, value, gasLimit })
@@ -111,6 +118,10 @@ export default function App() {
             onChange={e => setToAddr(e.target.value)}
           />
           <input
+            type="number"
+            min="0"
+            max={balance}
+            step="any"
             placeholder="发送数量"
             value={amount}
             onChange={e => setAmount(e.target.value)}
