@@ -21,6 +21,7 @@ export default function App() {
   const [asset, setAsset] = useState('ETH')
   const [toAddr, setToAddr] = useState('')
   const [amount, setAmount] = useState('')
+  const [sendStatus, setSendStatus] = useState('')
 
   const queryBalance = async (addr) => {
     if (!addr) return
@@ -70,6 +71,7 @@ export default function App() {
       return
     }
     try {
+      setSendStatus('发送中...')
       await queryBalance(address)
       const wallet = new ethers.Wallet(privateKey, provider)
       const value = ethers.parseEther(amount)
@@ -87,7 +89,9 @@ export default function App() {
       setShowSend(false)
       setToAddr('')
       setAmount('')
+      setSendStatus('发送成功')
     } catch (err) {
+      setSendStatus('发送失败：' + err.message)
       window.alert('发送失败：' + err.message)
     }
   }
@@ -98,13 +102,14 @@ export default function App() {
       <button onClick={createWallet}>创建钱包</button>
       <button onClick={importWallet}>导入钱包</button>
       <button onClick={() => queryBalance(address)}>查询余额</button>
-      <button onClick={() => setShowSend(true)}>发送</button>
+      <button onClick={() => { setSendStatus(''); setShowSend(true); }}>发送</button>
       <p>{mnemonic}</p>
       <p>ETH地址：{address}</p>
       <p>ETH余额：{balance}</p>
       <p>私钥：{privateKey}</p>
       <p>所需Gas：{gas}</p>
       <p>发送时间：{sendTime}</p>
+      <p>发送状态：{sendStatus}</p>
 
       {showSend && (
         <div>
@@ -128,7 +133,8 @@ export default function App() {
           />
           <button onClick={sendETH}>确认发送</button>
           <p>所需Gas：{gas}</p>
-          <button onClick={() => setShowSend(false)}>关闭</button>
+          <p>{sendStatus}</p>
+          <button onClick={() => { setShowSend(false); setSendStatus(''); }}>关闭</button>
         </div>
       )}
     </div>
