@@ -84,9 +84,9 @@ export default function App() {
       const tx = await wallet.sendTransaction({ to: toAddr, value, gasLimit })
       const receipt = await tx.wait()
       const block = await provider.getBlock(receipt.blockNumber)
-      setSendTime(new Date(block.timestamp * 1000).toLocaleString())
+      // setSendTime(new Date(block.timestamp * 1000).toLocaleString())
       await queryBalance(wallet.address)
-      setShowSend(false)
+      // setShowSend(false)
       setToAddr('')
       setAmount('')
       setSendStatus('发送成功')
@@ -98,7 +98,7 @@ export default function App() {
 
   return (
     <div>
-      <h1>钱包管理</h1>
+      <h1>LuckYouWallet</h1>
       <button onClick={createWallet}>创建钱包</button>
       <button onClick={importWallet}>导入钱包</button>
       <button onClick={() => queryBalance(address)}>查询余额</button>
@@ -107,9 +107,6 @@ export default function App() {
       <p>ETH地址：{address}</p>
       <p>ETH余额：{balance}</p>
       <p>私钥：{privateKey}</p>
-      <p>所需Gas：{gas}</p>
-      <p>发送时间：{sendTime}</p>
-      <p>发送状态：{sendStatus}</p>
 
       {showSend && (
         <div>
